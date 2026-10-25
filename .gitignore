@@ -20,7 +20,7 @@ res/
 *.out
 
 # Large model artifacts and local data
-data/
+/data/
 *.pt
 *.pth
 
