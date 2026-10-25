@@ -1,0 +1,62 @@
+[project]
+name = "ecg-af-coop"
+version = "0.1.0"
+description = "ECG atrial fibrillation experiment pipeline."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "gymnasium==1.2.3",
+    "h5py==3.16.0",
+    "ipykernel==7.2.0",
+    "ipywidgets==8.1.8",
+    "matplotlib==3.10.8",
+    "numpy==2.4.3",
+    "pandas==3.0.1",
+    "PyWavelets==1.9.0",
+    "pyyaml==6.0.3",
+    "sb3-contrib==2.8.0",
+    "scikit-learn==1.8.0",
+    "scipy==1.17.1",
+    "stable-baselines3==2.8.0",
+    "torch>=2.6,<2.8",
+    "torchvision",
+    "wfdb",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu124" }
+torchvision = { index = "pytorch-cu124" }
+triton = { index = "pytorch-cu124" }
+nvidia-cublas-cu12 = { index = "pytorch-cu124" }
+nvidia-cuda-cupti-cu12 = { index = "pytorch-cu124" }
+nvidia-cuda-nvrtc-cu12 = { index = "pytorch-cu124" }
+nvidia-cuda-runtime-cu12 = { index = "pytorch-cu124" }
+nvidia-cudnn-cu12 = { index = "pytorch-cu124" }
+nvidia-cufft-cu12 = { index = "pytorch-cu124" }
+nvidia-curand-cu12 = { index = "pytorch-cu124" }
+nvidia-cusolver-cu12 = { index = "pytorch-cu124" }
+nvidia-cusparse-cu12 = { index = "pytorch-cu124" }
+nvidia-cusparselt-cu12 = { index = "pytorch-cu124" }
+nvidia-nccl-cu12 = { index = "pytorch-cu124" }
+nvidia-nvjitlink-cu12 = { index = "pytorch-cu124" }
+nvidia-nvtx-cu12 = { index = "pytorch-cu124" }
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[project.scripts]
+ecg-af = "run:main"
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["run"]
+
+[tool.setuptools.packages.find]
+include = ["ecg_af*"]
+
+[tool.setuptools.package-data]
+ecg_af = ["config.yaml"]

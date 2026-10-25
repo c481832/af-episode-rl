@@ -1,0 +1,349 @@
+experiments:
+  base: {}
+    # rl:
+    #   ppo_reward:
+    #     switch:
+    #       weight: 0.005
+  noise:
+    data:
+      preprocessing:
+        target_fs: 500
+        bandpass: null
+    train:
+      device: "cuda"   
+  foundation:
+    data:
+      k_folds:
+        n_splits: 1
+      preprocessing:
+        target_fs: 500
+        bandpass:
+          lowcut: 0.67
+          highcut: 40.0
+          order: 4
+        notch:
+          freq: 50.0
+          q: 30.0
+        baseline_median_seconds: 0.4
+        zscore: true
+    train:
+      epochs: 5
+    rl:
+      base_models:
+        segment: ecg_founder
+  foundation_gamma:
+    data:
+      k_folds:
+        n_splits: 1
+      preprocessing:
+        target_fs: 500
+        bandpass:
+          lowcut: 0.67
+          highcut: 40.0
+          order: 4
+        notch:
+          freq: 50.0
+          q: 30.0
+        baseline_median_seconds: 0.4
+        zscore: true
+    train:
+      epochs: 5
+    rl:
+      base_models:
+        segment: ecg_founder
+      train:
+        gamma: 0.98
+  foundation_layer2:
+    data:
+      split: 
+        layer2:
+          train_sources: [shdb_af, iridia]
+          test_size: 0.3
+          val_size: 0
+      k_folds:
+        n_splits: 1
+      preprocessing:
+        target_fs: 500
+        bandpass:
+          lowcut: 0.67
+          highcut: 40.0
+          order: 4
+        notch:
+          freq: 50.0
+          q: 30.0
+        baseline_median_seconds: 0.4
+        zscore: true
+    train:
+      epochs: 5
+    rl:
+      base_models:
+        segment: ecg_founder
+
+defaults:
+  data:
+    seed: 99
+    split:
+      layer1:
+        test_size: 0.1
+        val_size: 0.1
+      layer2:
+        train_sources: []
+        test_size: 0.0
+        val_size: 0.0
+    k_folds:
+      n_splits: 1
+    sources:
+      afdb:
+        path: "../../data/physionet.org/files/afdb/1.0.0"
+        excluded_records: ["00735", "03665"]
+        list_hea_files: false
+        rhythm_schema: token
+      mitdb:
+        path: "../../data/physionet.org/files/mitdb/1.0.0"
+        excluded_records: ["102", "104", "107", "217"]
+        list_hea_files: false
+        rhythm_schema: token
+      cpsc2021_1:
+        path: "../../data/physionet.org/files/cpsc2021/1.0.0/Training_set_I"
+        excluded_records: []
+        list_hea_files: true
+        rhythm_schema: token
+      cpsc2021_2:
+        path: "../../data/physionet.org/files/cpsc2021/1.0.0/Training_set_II"
+        excluded_records: []
+        list_hea_files: true
+        rhythm_schema: token
+      long_term_af:
+        path: "../../data/physionet.org/files/long-term-af-database-1.0.0/files"
+        excluded_records: []
+        list_hea_files: false
+        rhythm_schema: token
+      shdb_af:
+        path: "../../data/physionet.org/files/shdb-af/1.0.1"
+        excluded_records:
+          [
+            "053",
+            "057",
+            "058",
+            "059",
+            "060",
+            "061",
+            "063",
+            "066",
+            "067",
+            "068",
+            "069",
+            "079",
+            "080",
+            "081",
+            "083",
+            "085",
+            "087",
+            "088",
+            "090",
+            "092",
+            "093",
+            "094",
+            "095",
+            "096",
+            "097",
+            "098",
+            "099",
+            "100",
+            "101",
+            "104",
+          ]
+        list_hea_files: true
+        rhythm_schema: token
+      iridia:
+        path: "../../data/iridia/iridia-af-records-v1.0.1"
+        excluded_records: []
+        list_hea_files: false
+        rhythm_schema: token
+      # zbeats_zbgoldall_mit:
+      #   path: "../../data/zbeats/zb_ref_zbgoldall_mit"
+      #   excluded_records: []
+      #   list_hea_files: false
+      #   rhythm_schema: start_end
+      # zbeats_zbgold2_mit:
+      #   path: "../../data/zbeats/zb_ref_zbgold2_mit"
+      #   excluded_records: []
+      #   list_hea_files: false
+      #   rhythm_schema: start_end
+      # zbeats_zbpatch_mit:
+      #   path: "../../data/zbeats/zb_ref_zbpatch_mit"
+      #   excluded_records: []
+      #   list_hea_files: false
+      #   rhythm_schema: start_end
+    override_test: 
+      - long_term_af
+      - shdb_af
+      - iridia
+      # - zbeats_zbgoldall_mit
+      # - zbeats_zbgold2_mit
+      # - zbeats_zbpatch_mit
+    preferred_leads: ["MLII", "ECG1", "I", "II", "ECG"]
+    rhythms:
+      target: ["(AFIB", "(AFL"]
+      target_start_end: ["AFib", "AFL"]
+      strip_rhythms: ["(VT", "(B", "(T", "(IVR", "(VFL"]
+    preprocessing:
+      target_fs: 250
+      bandpass:
+        lowcut: 0.5
+        highcut: 40.0
+        order: 6
+      dwt_denoise: null
+      notch: null
+      baseline_median_seconds: null
+      zscore: false
+      noise_filter_threshold: 100
+    r_peaks:
+      min_rr_seconds: 0.25
+      max_rr_seconds: 2.0
+      wavelet: "db4"
+      level: 4
+
+  modes:
+    beat:
+      pre_beat_window: 62
+      post_beat_window: 125
+    segment:
+      window_seconds: 10
+      train_step_seconds: 10
+      test_step_seconds: 1
+      af_ratio_threshold: 0
+    noise:
+      window_seconds: 5
+      step_seconds: 1
+
+  models:
+    cnn_lstm:
+      in_channels: [0]
+      cnn_channels: [32, 64, 32]
+      cnn_kernel_size: 5
+      cnn_padding: 2
+      cnn_pool_kernel_size: 2
+      cnn_pool_stride: 2
+      lstm_hidden_size: 64
+      dense_units: 128
+      dropout: 0.2
+    resnet1d:
+      in_channels: [0]
+      base_channels: 32
+      num_blocks: 8
+      kernel_size: 7
+      output_steps: 1
+      dropout: 0.2
+    ecg_founder:
+      in_channels: [0]
+      n_classes: 1
+      pretrained: true
+      linear_prob: true
+      pretrained_path: "foundation/1_lead_ECGFounder.pth"
+      net1d:
+        base_filters: 64
+        ratio: 1
+        filter_list: [64, 160, 160, 400, 400, 1024, 1024]
+        m_blocks_list: [2, 2, 2, 3, 3, 4, 4]
+        kernel_size: 16
+        stride: 2
+        groups_width: 16
+        use_bn: false
+        use_do: false
+    noise_detector:
+      checkpoint_path: "foundation/noise_detector_model.pt"
+      target_fs: 500
+      inference_only: true
+      threshold: 0.05
+
+  train:
+    device: "cuda"
+    lr: 0.0005
+    batch_size: 64
+    epochs: 20
+    weight_decay: 0.0001
+    gamma: 2.0
+    checkpoint_dir: "../runs"
+    scheduler: null
+
+  postprocessing:
+    threshold: 0.5
+    merge_gap_seconds: 3.0
+    min_duration_seconds: 30.0
+
+  rl:
+    beat_carry_seconds: 2
+    observation_fields:
+      heart_rate:
+        enabled: true
+        hr_lo: 20
+        hr_hi: 200
+      last_state:
+        enabled: true
+    obs_window:
+      default: [[0, 0]]
+      segment: [[0, 0], [1, 1], [2, 3], [4, 7], [8, 15], [16, 31]]
+    base_models:
+      beat: null
+      segment: resnet1d
+      quality: null
+    evaluation_metric:
+      error_cap_seconds: 60.0
+    ppo_reward:
+      edge:
+        tau_seconds: 10.0
+        reach_seconds: 30.0
+        weight: 0.1
+      coverage:
+        low: 0.0
+        lambda: 0.1
+        constraint:
+          lr: 0.0
+          min: 0.0
+          max: 1.0
+      switch:
+        weight: 0
+      structural:
+        enabled: true
+        tau_seconds: 10.0
+        onset_weight: 0.3
+        offset_weight: 0.3
+        fragment_weight: 0.1
+    train:
+      device: "cpu"
+      policy: "MlpPolicy"
+      net_arch: [4]
+      vf_arch: [64, 64]
+      n_steps: 16384
+      batch_size: 1024
+      normalize_advantage: true
+      vf_coef: 0.5
+      gamma: 0.0
+      gae_lambda: 0.95
+      clip_range: 0.1
+      target_kl: 0.01
+      eval_every_n_passes: 1
+      selection_metric: val_reward_total
+      ignore_pass0: false
+      n_envs: 8
+      lr_decay: none
+      warm_start:
+        enabled: false
+        a: 2.0
+        k: 8.0
+      supervised:
+        learning_rate: 0.0003
+        n_epochs: 5
+      phase1:
+        learning_rate: 0.0003
+        ent_coef: 0.01
+        n_epochs: 3
+        n_passes: 5
+        gamma0_passes: 0
+      phase2:
+        learning_rate: 0.0001
+        ent_coef: 0.0
+        n_epochs: 1
+        n_passes: 1
+        gamma0_passes: 0

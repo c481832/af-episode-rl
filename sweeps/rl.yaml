@@ -1,0 +1,72 @@
+- tag: baseline
+
+- tag: net_arch16
+  rl.train.net_arch: [16]
+- tag: net_arch64
+  rl.train.net_arch: [64]
+
+- tag: vf_arch4
+  rl.train.vf_arch: [4]
+- tag: vf_arch256
+  rl.train.vf_arch: [256, 256]
+
+- tag: n_steps4096
+  rl.train.n_steps: 4096
+- tag: n_steps32768
+  rl.train.n_steps: 32768
+
+- tag: batch256
+  rl.train.batch_size: 256
+- tag: batch4096
+  rl.train.batch_size: 4096
+
+- tag: vf_coef1
+  rl.train.vf_coef: 1.0
+- tag: vf_coef3
+  rl.train.vf_coef: 3.0
+
+- tag: clip0.05
+  rl.train.clip_range: 0.05
+- tag: clip0.2
+  rl.train.clip_range: 0.2
+
+- tag: kl0.005
+  rl.train.target_kl: 0.005
+- tag: kl0.03
+  rl.train.target_kl: 0.03
+
+- tag: lr1e-4
+  rl.train.phase1.learning_rate: 0.0001
+- tag: lr1e-3
+  rl.train.phase1.learning_rate: 0.001
+
+- tag: ent0
+  rl.train.phase1.ent_coef: 0.0
+- tag: ent0.05
+  rl.train.phase1.ent_coef: 0.05
+
+- tag: epochs1
+  rl.train.phase1.n_epochs: 1
+- tag: epochs10
+  rl.train.phase1.n_epochs: 10
+
+- tag: passes3
+  rl.train.phase1.n_passes: 3
+- tag: passes10
+  rl.train.phase1.n_passes: 10
+
+- tag: no_lookahead
+  rl.obs_window.segment: [[0, 0]]
+- tag: no_hr
+  rl.observation_fields.heart_rate.enabled: false
+- tag: no_last
+  rl.observation_fields.last_state.enabled: false
+
+- tag: no_edge
+  rl.ppo_reward.edge.weight: 0
+- tag: no_coverage
+  rl.ppo_reward.coverage.lambda: 0
+- tag: no_structural
+  rl.ppo_reward.structural.onset_weight: 0
+  rl.ppo_reward.structural.offset_weight: 0
+  rl.ppo_reward.structural.fragment_weight: 0
